@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vehicle Rental System</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px;
+    background: linear-gradient(to right, #c9d6ff, #e2e2e2);
+  }
+ h1 {
+  font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 900;
+  font-size: 3.5rem;
+  color: #222;
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+#availableVehiclesSection {
+background: linear-gradient(135deg, #00f260, #0575e6);
+}
+
+#registerCustomerSection {
+background: linear-gradient(135deg, #fc5c7d, #6a82fb);
+}
+
+#rentVehicleSection {
+background: linear-gradient(135deg, #f953c6, #b91d73);
+}
+
+#availableVehiclesSection h2 {
+text-decoration: underline;
+}
+#registerCustomerSection h2 {
+text-decoration: underline;
+}
+#rentVehicleSection h2 {
+text-decoration: underline;
+}
+#rentVehicleSection h3 {
+text-decoration: underline;
+}
+
+section {
+margin-bottom: 30px;
+background: #ffffffd9;
+padding: 20px 25px;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+display: none;
+transition: all 0.3s ease-in-out;
+}
+section.active {
+display: block;
+}
+label {
+display: block;
+margin: 10px 0 5px;
+font-weight: bold;
+color: #333;
+}
+input, select {
+padding: 10px;
+width: 100%;
+max-width: 350px;
+margin-bottom: 14px;
+border-radius: 6px;
+border: 1px solid #ccc;
+box-sizing: border-box;
+background-color: #fdfdfd;
+transition: border 0.2s;
+}
+input:focus, select:focus {
+border: 1px solid #007bff;
+outline: none;
+}
+button {
+padding: 10px 18px;
+border-radius: 25px;
+border: none;
+background: linear-gradient(to right, #007bff, #00c6ff);
+color: #fff;
+font-weight: bold;
+font-size: 14px;
+cursor: pointer;
+transition: transform 0.2s ease, background 0.3s ease;
+}
+button:hover {
+background: linear-gradient(to right, #0056b3, #0088cc);
+transform: scale(1.05);
+}
+.vehicle-list, .rental-list, .customer-list {
+max-width: 800px;
+}
+.vehicle-item, .rental-item, .customer-item {
+background: #f0f8ff;
+padding: 12px 15px;
+margin-bottom: 12px;
+border-radius: 10px;
+border-left: 5px solid #007bff;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 12px;
+background: #ffffff;
+border-radius: 8px;
+overflow: hidden;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 12px 10px;
+text-align: left;
+}
+th {
+background-color: #007bff;
+color: white;
+}
+tr:nth-child(even) {
+background-color: #f9f9f9;
+}
+.button-group {
+display: flex;
+gap: 12px;
+max-width: 350px;
+margin-top: 10px;
+}
+.nav-buttons {
+display: flex;
+gap: 12px;
+margin-top: 20px;
+max-width: 350px;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 15px 0;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.payment-method:hover {
+  background: #e9e9e9;
+}
+
+.payment-method img {
+  height: 40px;
+}
+
+.payment-details {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.payment-success {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.qr-code-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.qr-code {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.qr-code img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.scan-pay-text {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Bill styles */
+#billContainer {
+  display: none;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.bill-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 2px dashed #ccc;
+  padding-bottom: 10px;
+}
+
+.bill-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.bill-header p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.bill-details {
+  margin-bottom: 20px;
+}
+
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.bill-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.bill-value {
+  color: #333;
+}
+
+.bill-table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+}
+
+.bill-table th {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+.bill-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.bill-total {
+  margin-top: 20px;
+  text-align: right;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.bill-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-style: italic;
+  color: #777;
+  border-top: 2px dashed #ccc;
+  padding-top: 10px;
+}
+
+#printButton {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#printButton:hover {
+  background: #0056b3;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #billContainer, #billContainer * {
+    visibility: visible;
+  }
+  #billContainer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    box-shadow: none;
+  }
+  #printButton {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<h1>Vehicle Rental System</h1>
+
+<!-- Page 1: Available Vehicles -->
+<section id="availableVehiclesSection" class="active">
+  <h2>Available Vehicles</h2>
+  <div class="vehicle-list" id="vehicleList"></div>
+  <div class="nav-buttons">
+    <button id="nextToRegisterBtn">Next &raquo;</button>
+  </div>
+</section>
+
+<!-- Page 2: Register Customer -->
+<section id="registerCustomerSection">
+  <h2>Customer Registration</h2>
+  <form id="registerCustomerForm">
+    <label for="custId">Customer ID:</label>
+    <input type="text" id="custId" readonly />
+    <label for="custName">Name:</label>
+    <input type="text" id="custName" required />
+    <label for="custPhone">Phone Number:</label>
+    <input type="tel" id="custPhone" required />
+    <label for="custEmail">Email:</label>
+    <input type="email" id="custEmail" required />
+    <div class="button-group">
+      <button type="submit">Register</button>
+      <button type="button" onclick="document.getElementById('registerCustomerForm').reset()">Reset</button>
+    </div>
+  </form>
+  <div id="customerMsg"></div>
+  <div id="customerList" class="customer-list"></div>
+  <div class="nav-buttons">
+    <button id="backToAvailableBtn">&laquo; Back</button>
+    <button id="nextToRentBtn" disabled>Next &raquo;</button>
+  </div>
+</section>
+
+<!-- Page 3: Rent Vehicle and View Rentals -->
+<section id="rentVehicleSection">
+  <h2>Rent Vehicle</h2>
+  <form id="rentVehicleForm">
+    <label for="rentCustId">Customer ID:</label>
+    <input type="text" id="rentCustId" required />
+    <label for="rentVehicleReg">Vehicle Registration Number:</label>
+    <input type="text" id="rentVehicleReg" required />
+    <label for="rentDays">Number of Rental Days:</label>
+    <input type="number" id="rentDays" min="1" value="1" required />
+    <button type="submit">Rent Vehicle</button>
+  </form>
+  <div id="rentalMsg"></div>
+  
+  <!-- Payment Section -->
+  <div id="paymentSection" style="display: none; margin-top: 30px;">
+    <h3>Complete Payment</h3>
+    <div class="payment-method" id="scanButton">
+      <img src="C:\Users\maahi\Downloads\scanner.jpeg" alt="Scan QR">
+      <span>Scan QR Code</span>
+    </div>
+    <div id="scanDetails" class="payment-details" style="display: none;">
+      <div class="scan-pay-text">Scan and Pay</div>
+      <div class="qr-code-container">
+        <div class="qr-code">
+          <img src="C:\HTML S2\HTML Project Phase 2\phone pay scanner.jpg" alt="QR Code">
+        </div>
+      </div>
+      <label for="scanAmount"><strong>Amount to Pay (₹):</strong></label>
+      <input type="number" id="scanAmount" readonly style="background: #eee;">
+      <button onclick="processScanPayment()" style="margin-top: 15px;">Submit Payment</button>
+    </div>
+    <div class="payment-method" id="phonepeButton">
+      <img src="C:\Users\maahi\Downloads\phone pay.jpeg" alt="PhonePe">
+      <span>Pay with PhonePe</span>
+    </div>
+    <div id="paymentDetails" class="payment-details" style="display: none;">
+      <label for="paymentAmount"><strong>Amount to Pay (₹):</strong></label>
+      <input type="number" id="paymentAmount" readonly style="background: #eee;">
+      <label for="upiId" style="margin-top: 15px;"><strong>Enter UPI ID:</strong></label>
+      <input type="text" id="upiId" placeholder="example@upi" />
+      <button onclick="processPayment()" style="margin-top: 15px;">Submit Payment</button>
+      <div id="paymentStatus" class="payment-success"></div>
+    </div>
+  </div>
+
+  <h3>Current Rentals</h3>
+  <div class="rental-list" id="rentalList"></div>
+  <div class="nav-buttons">
+    <button id="backToRegisterBtn">&laquo; Back</button>
+    <button id="backToAvailableFromRentBtn">&laquo;&laquo; Available Vehicles</button>
+  </div>
+</section>
+
+<!-- Bill Container (hidden by default) -->
+<div id="billContainer">
+  <div class="bill-header">
+    <h2>VEHICLE RENTAL RECEIPT</h2>
+    <p>Date: <span id="billDate"></span></p>
+  </div>
+  <div class="bill-details">
+    <div class="bill-row">
+      <span class="bill-label">Customer ID:</span>
+      <span class="bill-value" id="billCustomerId"></span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Customer Name:</span>
+      <span class="bill-value" id="billCustomerName"></span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Customer Phone:</span>
+      <span class="bill-value" id="billCustomerPhone"></span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Customer Email:</span>
+      <span class="bill-value" id="billCustomerEmail"></span>
+    </div>
+  </div>
+  <table class="bill-table">
+    <thead>
+      <tr>
+        <th>Vehicle Details</th>
+        <th>Days</th>
+        <th>Rate/Day</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong id="billVehicleType"></strong><br>
+          <span id="billVehicleBrand"></span><br>
+          Reg: <span id="billVehicleReg"></span>
+        </td>
+        <td id="billDays"></td>
+        <td id="billRate"></td>
+        <td id="billAmount"></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="bill-total">
+    <div class="bill-row">
+      <span class="bill-label">Subtotal:</span>
+      <span class="bill-value" id="billSubtotal"></span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Tax (8%):</span>
+      <span class="bill-value" id="billTax"></span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Total Amount:</span>
+      <span class="bill-value" id="billTotal"></span>
+    </div>
+  </div>
+  <div class="bill-footer">
+    <p>Thank you for your business!</p>
+    <p>Please bring this receipt when returning the vehicle</p>
+  </div>
+  <button id="printButton" onclick="printBill()">Print Bill</button>
+</div>
+
+<script>
+  const vehicles = [
+    { reg: "BR12UY1764", brand: "Hercules", rent: 440, type: "Bicycle (Normal)", available: true, seats: 1 },
+    { reg: "TS14CD5678", brand: "Hero Cycles", rent: 610, type: "Bicycle (Gear)", available: true, seats: 1 },
+    { reg: "MH19AB9984", brand: "Hero Lectro", rent: 700, type: "Bicycle (Electric)", available: true, seats: 1 },
+    { reg: "KL10PL5467", brand: "TVS iQube", rent: 820, type: "Bike (Electric) Scooter [150CC]", available: true, seats: 2 },
+    { reg: "TN80ZZ3976", brand: "Royal Enfield", rent: 1000, type: "Bike (Petrol) Motorcycle [350CC]", available: true, seats: 2 },
+    { reg: "AS67XY9432", brand: "Yamaha", rent: 750, type: "Bike (Petrol) Motorcycle [150CC]", available: true, seats: 2 },
+    { reg: "CG13TT0745", brand: "Suzki", rent: 680, type: "Bike (Petrol) scooter [350CC]", available: true, seats: 2 },
+    { reg: "CH12GH9100", brand: "Toyota", rent: 1670, type: "Car (Diesel) Coupe", available: true, seats: 5 },
+    { reg: "DL56KK4867", brand: "Hyundai", rent: 1500, type: "Car (Electric) Hatchback EV", available: true, seats: 4 },
+    { reg: "GA99MN9984", brand: "Tata", rent: 1860, type: "Car (Petrol) Sedan", available: true, seats: 5 },
+    { reg: "KA87OI7224", brand: "Ashok Leyland", rent: 2800, type: "Bus (Diesel)", available: true, seats: 50 },
+    { reg: "AR14CD9885", brand: "Force Motors", rent: 2500, type: "Bus (Electric)", available: true, seats: 40 },
+    { reg: "GA43AB1765", brand: "Mahindra", rent: 2780, type: "Truck (Diesel) Moving Truck", available: true, seats: 2 },
+    { reg: "GJ78CD2975", brand: "Euler Motors", rent: 2710, type: "Truck (Electric) Pickup Truck", available: true, seats: 4 },
+    { reg: "PB91AB2962", brand: "Eicher", rent: 2560, type: "Truck (Diesel) Box Truck", available: true, seats: 2 },
+    { reg: "RJ86AA2983", brand: "Maruti Suzuki", rent: 2900, type: "Van (Diesel) Cargo Van", available: true, seats: 2 },
+    { reg: "MP56RS1995", brand: "PMI Electro", rent: 2550, type: "Van (Electric) Passenger Van", available: true, seats: 10 },
+    { reg: "AP34HN5555", brand: "Renault", rent: 2850, type: "Van (Diesel) Mini Van", available: true, seats: 7 },
+  ];
+  
+  const customers = [];
+  const rentals = [];
+  let customerIdCounter = localStorage.getItem('customerIdCounter') ? parseInt(localStorage.getItem('customerIdCounter')) : 1;
+  let currentRentalTotal = 0;
+  let currentRental = null;
+
+  function showAvailableVehicles() {
+    const vehicleList = document.getElementById('vehicleList');
+    vehicleList.innerHTML = '';
+
+    const table = document.createElement('table');
+    const header = `
+      <tr>
+        <th>Vehicle</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Registration #</th>
+        <th>Seats</th>
+        <th>Rent/Day (₹)</th>
+        <th>Status</th>
+      </tr>`;
+    table.innerHTML = header;
+
+    vehicles.forEach(v => {
+      const [vehicle, ...categoryParts] = v.type.split(" ");
+      const category = categoryParts.join(" ");
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${vehicle}</td>
+        <td>${category}</td>
+        <td>${v.brand}</td>
+        <td>${v.reg}</td>
+        <td>${v.seats}</td>
+        <td>${v.rent}</td>
+        <td>${v.available ? "Available" : "Rented"}</td>`;
+      table.appendChild(row);
+    });
+
+    vehicleList.appendChild(table);
+  }
+
+  function showCustomers() {
+    const customerList = document.getElementById('customerList');
+    customerList.innerHTML = '';
+    customers.forEach(c => {
+      const div = document.createElement('div');
+      div.classList.add('customer-item');
+      div.innerHTML = `
+        <strong>ID:</strong> ${c.id}<br/>
+        <strong>Name:</strong> ${c.name}<br/>
+        <strong>Phone:</strong> ${c.phone}<br/>
+        <strong>Email:</strong> ${c.email}
+      `;
+      customerList.appendChild(div);
+    });
+  }
+
+  function findCustomer(id) {
+    return customers.find(c => c.id === id);
+  }
+
+  function findVehicle(reg) {
+    return vehicles.find(v => v.reg.toLowerCase() === reg.toLowerCase());
+  }
+
+  function showRentals() {
+    const rentalList = document.getElementById('rentalList');
+    rentalList.innerHTML = '';
+    if(rentals.length === 0) {
+      rentalList.innerHTML = "<p>No rentals yet.</p>";
+      return;
+    }
+    rentals.forEach(r => {
+      const div = document.createElement('div');
+      div.classList.add('rental-item');
+      div.innerHTML = `
+        <strong>Customer:</strong> ${r.customer.name} (ID: ${r.customer.id})<br/>
+        <strong>Vehicle:</strong> ${r.vehicle.type.split(" ")[0]} |  ${r.vehicle.type.split(" ").slice(1).join(" ")} | ${r.vehicle.brand} | Reg#: ${r.vehicle.reg}<br/>
+        <strong>Start Date:</strong> ${r.startDate}<br/>
+        <strong>Start Time:</strong> ${r.startTime}<br/>
+        <strong>Days:</strong> ${r.days}<br/>
+        <strong>Total:</strong> ₹${r.total}
+      `;
+      rentalList.appendChild(div);
+    });
+  }
+
+  function generateBill(rental) {
+    const taxRate = 0.08;
+    const subtotal = rental.total;
+    const tax = subtotal * taxRate;
+    const total = subtotal + tax;
+    
+    document.getElementById('billDate').textContent = new Date().toLocaleString();
+    document.getElementById('billCustomerId').textContent = rental.customer.id;
+    document.getElementById('billCustomerName').textContent = rental.customer.name;
+    document.getElementById('billCustomerPhone').textContent = rental.customer.phone;
+    document.getElementById('billCustomerEmail').textContent = rental.customer.email;
+    document.getElementById('billVehicleType').textContent = rental.vehicle.type;
+    document.getElementById('billVehicleBrand').textContent = rental.vehicle.brand;
+    document.getElementById('billVehicleReg').textContent = rental.vehicle.reg;
+    document.getElementById('billDays').textContent = rental.days;
+    document.getElementById('billRate').textContent = '₹' + rental.vehicle.rent;
+    document.getElementById('billAmount').textContent = '₹' + subtotal;
+    document.getElementById('billSubtotal').textContent = '₹' + subtotal.toFixed(2);
+    document.getElementById('billTax').textContent = '₹' + tax.toFixed(2);
+    document.getElementById('billTotal').textContent = '₹' + total.toFixed(2);
+    
+    document.getElementById('billContainer').style.display = 'block';
+  }
+
+  function printBill() {
+    window.print();
+  }
+
+  function showSection(sectionId) {
+    ['availableVehiclesSection', 'registerCustomerSection', 'rentVehicleSection'].forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+    document.getElementById(sectionId).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('nextToRegisterBtn').addEventListener('click', () => {
+    showSection('registerCustomerSection');
+    document.getElementById('customerMsg').textContent = '';
+    showCustomers();
+    if(customers.length === 0) {
+      document.getElementById('nextToRentBtn').disabled = true;
+    } else {
+      document.getElementById('nextToRentBtn').disabled = false;
+    }
+  });
+
+  document.getElementById('backToAvailableBtn').addEventListener('click', () => {
+    showSection('availableVehiclesSection');
+    showAvailableVehicles();
+  });
+
+  document.getElementById('nextToRentBtn').addEventListener('click', () => {
+    showSection('rentVehicleSection');
+    showAvailableVehicles();
+  });
+
+  document.getElementById('backToRegisterBtn').addEventListener('click', () => {
+    showSection('registerCustomerSection');
+    showCustomers();
+  });
+
+  document.getElementById('backToAvailableFromRentBtn').addEventListener('click', () => {
+    showSection('availableVehiclesSection');
+    showAvailableVehicles();
+  });
+
+  document.getElementById('registerCustomerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = customerIdCounter.toString();
+
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const email = document.getElementById('custEmail').value.trim();
+
+    if (findCustomer(id)) {
+      document.getElementById('customerMsg').textContent = 'Customer ID already exists!';
+      return;
+    }
+
+    customers.push({ id, name, phone, email });
+    customerIdCounter++;
+    localStorage.setItem('customerIdCounter', customerIdCounter);
+    document.getElementById('customerMsg').textContent = 'Customer registered successfully.';
+    e.target.reset();
+    document.getElementById('custId').value = customerIdCounter;
+
+    showCustomers();
+    document.getElementById('nextToRentBtn').disabled = false;
+  });
+
+  document.getElementById('rentVehicleForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const custId = document.getElementById('rentCustId').value.trim();
+    const reg = document.getElementById('rentVehicleReg').value.trim();
+    const days = parseInt(document.getElementById('rentDays').value, 10);
+
+    const customer = findCustomer(custId);
+    if (!customer) {
+      document.getElementById('rentalMsg').textContent = 'Customer not found!';
+      return;
+    }
+
+    const vehicle = findVehicle(reg);
+    if (!vehicle || !vehicle.available) {
+      document.getElementById('rentalMsg').textContent = 'Vehicle not found or unavailable!';
+      return;
+    }
+
+    vehicle.available = false;
+    currentRentalTotal = days * vehicle.rent;
+    
+    currentRental = {
+      customer,
+      vehicle,
+      days,
+      startDate: new Date().toLocaleDateString(),
+      startTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }),
+      total: currentRentalTotal
+    };
+    
+    rentals.push(currentRental);
+
+    document.getElementById('rentalMsg').textContent = 'Rental successful! Please complete payment.';
+    e.target.reset();
+    showAvailableVehicles();
+    showRentals();
+    
+    document.getElementById('paymentSection').style.display = 'block';
+    document.getElementById('scanDetails').style.display = 'none';
+    document.getElementById('paymentDetails').style.display = 'none';
+    document.getElementById('paymentStatus').textContent = '';
+    document.getElementById('scanAmount').value = currentRentalTotal;
+  });
+
+  document.getElementById('scanButton').addEventListener('click', () => {
+    const scanDetails = document.getElementById('scanDetails');
+    if (scanDetails.style.display === 'none') {
+      scanDetails.style.display = 'block';
+      document.getElementById('paymentDetails').style.display = 'none';
+    } else {
+      scanDetails.style.display = 'none';
+    }
+  });
+
+  document.getElementById('phonepeButton').addEventListener('click', () => {
+    const paymentDetails = document.getElementById('paymentDetails');
+    if (paymentDetails.style.display === 'none') {
+      document.getElementById('paymentAmount').value = currentRentalTotal;
+      paymentDetails.style.display = 'block';
+      document.getElementById('scanDetails').style.display = 'none';
+    } else {
+      paymentDetails.style.display = 'none';
+    }
+  });
+
+  function processScanPayment() {
+    document.getElementById('paymentStatus').textContent = 
+      `Payment of ₹${currentRentalTotal} successful via QR scan`;
+    
+    generateBill(currentRental);
+    
+    setTimeout(() => {
+      document.getElementById('scanDetails').style.display = 'none';
+      document.getElementById('paymentSection').style.display = 'none';
+    }, 3000);
+  }
+
+  function processPayment() {
+    const upiId = document.getElementById('upiId').value.trim();
+    if (!upiId) {
+      alert('Please enter a valid UPI ID.');
+      return;
+    }
+    
+    if (!upiId.includes('@')) {
+      alert('Please enter a valid UPI ID (should contain @).');
+      return;
+    }
+    
+    document.getElementById('paymentStatus').textContent = 
+      `Payment of ₹${currentRentalTotal} successful via UPI ID: ${upiId}`;
+    
+    generateBill(currentRental);
+    
+    document.getElementById('upiId').value = '';
+    
+    setTimeout(() => {
+      document.getElementById('paymentDetails').style.display = 'none';
+      document.getElementById('paymentSection').style.display = 'none';
+    }, 3000);
+  }
+
+  showAvailableVehicles();
+  document.getElementById('custId').value = customerIdCounter;
+</script>
+</body>
+</html>
